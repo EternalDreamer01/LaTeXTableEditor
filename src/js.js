@@ -1646,51 +1646,52 @@ this.getHTML = (function(){
 					o.html = div.innerHTML.replace(/\n/g, "<br>");
 					return o;
 				}
-
-				text = text.replace(/^[\n\r]+/, "").replace(/[\n\r]+$/, "") + "\n";
-				var table = [],
-				row = [],
-				indbl = false,
-				start = true,
-				content = "";
-				for(var i=0, c;i<text.length;i++){
-					c = text.charAt(i);
-					if(start){
-						start = false;
-						if(c == '"'){
-							indbl = true;
+				
+				text = text.replace(/^\s+|\s+$/g, ""); // trim ends
+				var table = [];
+				var row = [];
+				var field = "";
+				var inQuotes = false;
+				for (var i = 0; i < text.length; i++) {
+					var c = text[i];
+					if (inQuotes) {
+					if (c === '"') {
+						if (text[i + 1] === '"') { // escaped quote
+						field += '"';
+						i++;
+						} else {
+						inQuotes = false;
 						}
-						else{
-							content += c;
-						}
+					} else {
+						field += c;
 					}
-					else if(c == '"' && indbl){
-						if(text.charAt(i+1) == '"'){
-							i++;
-							content += c;
-						}
-						else{
-							indbl = false;
-						}
-					}
-					else if(c == "," && !indbl){
-						row.push(createObject(content));
-						indbl = false;
-						content = "";
-						start = true
-					}
-					else if(c == "\n" && !indbl){
-						row.push(createObject(content));
-						indbl = false;
-						content = "";
-						start = true
+					} else {
+					if (c === '"') {
+						inQuotes = true;
+					} else if (c === ",") {
+						row.push(createObject(field));
+						field = "";
+					} else if (c === "\r") {
+						// ignore bare CR, handle CRLF via LF below
+					} else if (c === "\n") {
+						row.push(createObject(field));
 						table.push(row);
 						row = [];
+						field = "";
+					} else {
+						field += c;
 					}
-					else{
-						content += c;
 					}
 				}
+				// push last field/row if file doesn't end with newline
+				if (inQuotes) {
+					// unterminated quote — treat remaining as field
+				}
+				if (field !== "" || row.length > 0) {
+					row.push(createObject(field));
+					table.push(row);
+				}
+				
 				return {
 					autoBooktabs : false,
 					caption: {
