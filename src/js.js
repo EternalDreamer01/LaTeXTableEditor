@@ -6788,3 +6788,52 @@ window.addEventListener("beforeunload", function() {
 		}
 	}
 }, false);
+
+var keydown = {
+	ctrl: false,
+	shift: false
+};
+
+window.addEventListener("keydown", (event) => {
+	switch (event.key) {
+		case "b":
+		case "B":
+			if (keydown.ctrl) {
+				event.preventDefault();
+				table.toggleExecCommand('bold');
+			}
+			break;
+		case "i":
+		case "I":
+			if (keydown.ctrl) {
+				event.preventDefault();
+				table.toggleExecCommand('italic');
+			}
+			break;
+		case "u":
+		case "U":
+			if (keydown.ctrl) {
+				event.preventDefault();
+				table.toggleExecCommand('underline');
+			}
+			break;
+		case "Control":
+			keydown.ctrl = true;
+			break;
+		case "Shift":
+			keydown.shift = true;
+			break;
+	}
+})
+
+
+window.addEventListener("keyup", (event) => {
+	switch (event.key) {
+		case "Control":
+			keydown.ctrl = false;
+			break;
+		case "Shift":
+			keydown.shift = false;
+			break;
+	}
+})
