@@ -6795,6 +6795,7 @@ var keydown = {
 };
 
 window.addEventListener("keydown", (event) => {
+	// console.log(event.key);
 	switch (event.key) {
 		case "b":
 		case "B":
@@ -6823,6 +6824,14 @@ window.addEventListener("keydown", (event) => {
 		case "Shift":
 			keydown.shift = true;
 			break;
+		// case "Delete":
+		// 	event.preventDefault();
+		// 	const allCells = document.querySelectorAll("#table td[data-selected] .outer > div");
+		// 	if(allCells.length >= 2) {
+		// 		table.statesManager.registerState();
+		// 		allCells.forEach((cell) => cell.innerHTML = '');
+		// 	}
+		// 	break;
 	}
 })
 
