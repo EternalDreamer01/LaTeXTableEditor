@@ -6775,6 +6775,62 @@ console.log(params.siunitx+"|"+lines.length+"|"+div.innerHTML);
 				window.addEventListener("mouseup", function(e){
 					mouseup(e.pageX, e.pageY);		
 				});
+				var keydown = {
+					ctrl: false,
+					shift: false
+				};
+				window.addEventListener("keydown", (event) => {
+					switch (event.key) {
+						case "b":
+						case "B":
+							if (keydown.ctrl) {
+								event.preventDefault();
+								table.toggleExecCommand('bold');
+							}
+							break;
+						case "i":
+						case "I":
+							if (keydown.ctrl) {
+								event.preventDefault();
+								table.toggleExecCommand('italic');
+							}
+							break;
+						case "u":
+						case "U":
+							if (keydown.ctrl) {
+								event.preventDefault();
+								table.toggleExecCommand('underline');
+							}
+							break;
+						case "Control":
+							keydown.ctrl = true;
+							break;
+						case "Shift":
+							keydown.shift = true;
+							break;
+						case "Delete":
+							const allCells = document.querySelectorAll("#table td[data-selected] .outer > div");
+							// If is strictly superior to 1, or if the exactly 1 cell is selected without being currently edited (on focus)
+							if(allCells.length >= 2 || (allCells.length == 1 && document.activeElement !== allCells[0])) {
+								event.preventDefault();
+								table.statesManager.registerState();
+								allCells.forEach((cell) => cell.innerHTML = '');
+							}
+							break;
+					}
+				});
+
+				window.addEventListener("keyup", (event) => {
+					switch (event.key) {
+						case "Control":
+							keydown.ctrl = false;
+							break;
+						case "Shift":
+							keydown.shift = false;
+							break;
+					}
+				});
+
 			}
 		})()
 	window.table = table;
@@ -6788,61 +6844,3 @@ window.addEventListener("beforeunload", function() {
 		}
 	}
 }, false);
-
-var keydown = {
-	ctrl: false,
-	shift: false
-};
-
-window.addEventListener("keydown", (event) => {
-	// console.log(event.key);
-	switch (event.key) {
-		case "b":
-		case "B":
-			if (keydown.ctrl) {
-				event.preventDefault();
-				table.toggleExecCommand('bold');
-			}
-			break;
-		case "i":
-		case "I":
-			if (keydown.ctrl) {
-				event.preventDefault();
-				table.toggleExecCommand('italic');
-			}
-			break;
-		case "u":
-		case "U":
-			if (keydown.ctrl) {
-				event.preventDefault();
-				table.toggleExecCommand('underline');
-			}
-			break;
-		case "Control":
-			keydown.ctrl = true;
-			break;
-		case "Shift":
-			keydown.shift = true;
-			break;
-		// case "Delete":
-		// 	event.preventDefault();
-		// 	const allCells = document.querySelectorAll("#table td[data-selected] .outer > div");
-		// 	if(allCells.length >= 2) {
-		// 		table.statesManager.registerState();
-		// 		allCells.forEach((cell) => cell.innerHTML = '');
-		// 	}
-		// 	break;
-	}
-})
-
-
-window.addEventListener("keyup", (event) => {
-	switch (event.key) {
-		case "Control":
-			keydown.ctrl = false;
-			break;
-		case "Shift":
-			keydown.shift = false;
-			break;
-	}
-})
