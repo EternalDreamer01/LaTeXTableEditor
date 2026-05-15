@@ -6827,6 +6827,14 @@ console.log(params.siunitx+"|"+lines.length+"|"+div.innerHTML);
 							}
 							break;
 						
+						// Generate
+						case "g":
+							if (keydown.ctrl) {
+								event.preventDefault();
+								table.generate();
+							}
+							break;
+						
 						// Open file
 						case "o":
 							if (keydown.ctrl && keydown.shift) {
