@@ -11,11 +11,12 @@
 		else{
 			html = table.getHTML(cell);
 		}
-		var text = html.replace(/<\s*br\s*\/?\s*>/gi, "\n").replace(/<[^>]+?>/g,"").replace(/\&(lt|gt|amp|quot);?/gi, function(total, name){
+		var text = html.replace(/<\s*br\s*\/?\s*>/gi, "\n").replace(/<[^>]+?>/g,"").replace(/\&(lt|gt|amp|quot|nbsp);?/gi, function(total, name){
 			if(name == "lt"){ return "<" }
 			if(name == "gt"){ return ">" }
 			if(name == "amp"){ return "&" }
 			if(name == "quot"){ return "quot" }
+			if(name == "nbsp"){ return "" }
 		});
 		if(/[\n"]/.test(text) || text.indexOf(separator)>-1){
 			text = '"'+text.replace(/"/,"\\\"")+'"';
