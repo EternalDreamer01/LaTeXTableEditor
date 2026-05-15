@@ -6780,35 +6780,60 @@ console.log(params.siunitx+"|"+lines.length+"|"+div.innerHTML);
 					shift: false
 				};
 				window.addEventListener("keydown", (event) => {
-					switch (event.key) {
+					switch (event.key.toLowerCase()) {
+						// Style
 						case "b":
-						case "B":
 							if (keydown.ctrl) {
 								event.preventDefault();
 								table.toggleExecCommand('bold');
 							}
 							break;
 						case "i":
-						case "I":
 							if (keydown.ctrl) {
 								event.preventDefault();
 								table.toggleExecCommand('italic');
 							}
 							break;
 						case "u":
-						case "U":
 							if (keydown.ctrl) {
 								event.preventDefault();
 								table.toggleExecCommand('underline');
 							}
 							break;
-						case "Control":
+						
+						// Align
+						case "l":
+							if (keydown.ctrl && keydown.shift) {
+								event.preventDefault();
+								table.setAlign('l');
+							}
+							break;
+						case "r":
+							if (keydown.ctrl && keydown.shift) {
+								event.preventDefault();
+								table.setAlign('r');
+							}
+							break;
+						case "e":
+							if (keydown.ctrl && keydown.shift) {
+								event.preventDefault();
+								table.setAlign('c');
+							}
+							break;
+						case "j":
+							if (keydown.ctrl && keydown.shift) {
+								event.preventDefault();
+								table.setAlign('j');
+							}
+							break;
+						
+						case "control":
 							keydown.ctrl = true;
 							break;
-						case "Shift":
+						case "shift":
 							keydown.shift = true;
 							break;
-						case "Delete":
+						case "delete":
 							const allCells = document.querySelectorAll("#table td[data-selected] .outer > div");
 							// If is strictly superior to 1, or if the exactly 1 cell is selected without being currently edited (on focus)
 							if(allCells.length >= 2 || (allCells.length == 1 && document.activeElement !== allCells[0])) {
