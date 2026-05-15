@@ -6827,12 +6827,17 @@ console.log(params.siunitx+"|"+lines.length+"|"+div.innerHTML);
 							}
 							break;
 						
-						case "control":
-							keydown.ctrl = true;
+						// Open file
+						case "o":
+							if (keydown.ctrl && keydown.shift) {
+								event.preventDefault();
+								const input = document.getElementById('excel-file');
+								input.addEventListener("change", e => table.importExcel());
+								input.click();
+							}
 							break;
-						case "shift":
-							keydown.shift = true;
-							break;
+						
+						// Remove cells content
 						case "delete":
 							const allCells = document.querySelectorAll("#table td[data-selected] .outer > div");
 							// If is strictly superior to 1, or if the exactly 1 cell is selected without being currently edited (on focus)
@@ -6841,6 +6846,13 @@ console.log(params.siunitx+"|"+lines.length+"|"+div.innerHTML);
 								table.statesManager.registerState();
 								allCells.forEach((cell) => cell.innerHTML = '');
 							}
+							break;
+						
+						case "control":
+							keydown.ctrl = true;
+							break;
+						case "shift":
+							keydown.shift = true;
 							break;
 					}
 				});
