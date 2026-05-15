@@ -380,71 +380,82 @@ function $id(id) {
 			this.importExcel = function(file){
 				file = file || this._id("excel-file").files[0]
 				var elem_status = this._id('worksheet-loading-status');
-				if(file){	
-					this._id("excel-button").disabled = true;
+				if(file){
 					var _this = this;
-					var excelWorker = function excelWorker(data, cb, th) {
-						try{
-							var worker = new Worker("js/xlsxworker.js");
-						}
-						catch(e){
-							if(/origin.+null/.test(e.message)){
-								elem_status.innerHTML = "Impossible to load worksheets locally with this browser. Use another browser or load this page in a server.";
+					console.log(file);
+					if (file.type.startsWith("text/")) {
+						let reader = new FileReader();
+
+						reader.onload = function () {
+							table.importData(reader.result, file.type.slice("text/".length));
+						};
+
+						reader.readAsText(file);
+					}
+					else {
+						var excelWorker = function excelWorker(data, cb, th) {
+							try{
+								var worker = new Worker("js/xlsxworker.js");
 							}
-							else{
+							catch(e){
+								if(/origin.+null/.test(e.message)){
+									elem_status.innerHTML = "Impossible to load worksheets locally with this browser. Use another browser or load this page in a server.";
+								}
+								else{
+									console.error(e);
+									elem_status.innerHTML = "An unknown error occured";
+								}
+								document.getElementById("excel-button").disabled = false;
+								return false;
+							}
+							worker.onmessage = function(e) {
+								var t = e.data.t;
+								if(t == "e"){
+									console.error(e.data.d);
+									elem_status.innerHTML = "An error occured";
+									document.getElementById("excel-button").disabled = false;
+									worker.terminate();
+								}
+								else if(t == "xlsx"){
+									console.dir(e.data.d);
+									cb(e.data.d);
+									worker.terminate();
+								}
+							};
+							worker.onerror = function(e){
 								console.error(e);
-								elem_status.innerHTML = "An unknown error occured";
-							}
-							document.getElementById("excel-button").disabled = false;
-							return false;
-						}
-						worker.onmessage = function(e) {
-							var t = e.data.t;
-							if(t == "e"){
-								console.error(e.data.d);
 								elem_status.innerHTML = "An error occured";
 								document.getElementById("excel-button").disabled = false;
-								worker.terminate();
 							}
-							else if(t == "xlsx"){
-								console.dir(e.data.d);
-								cb(e.data.d);
-								worker.terminate();
-							}
+							worker.postMessage({d:data,
+								b:'binary', 
+								c:document.getElementById("opt-gen-comma").checked
+							});
 						};
-						worker.onerror = function(e){
+						var reader = new FileReader(), _this = this;
+						reader.onload = function(e){
+							elem_status.innerHTML = 'Converting... <a href="#" id="worksheet-cancel">Cancel</a>';
+							document.getElementById("worksheet-cancel").addEventListener("click", function(e){
+								e.preventDefault();
+								worker.terminate();
+								document.getElementById("excel-button").disabled = false;
+								elem_status.innerHTML = "";
+							},false);
+							excelWorker(e.target.result, _this._importExcel);
+						};
+						reader.onprogress = function(e){
+							if(e.lengthComputable){
+								var percent = Math.round(e.loaded/e.total*100);
+								elem_status.innerHTML = "Loading "+percent+"%";
+							}
+						}
+						reader.onerror = function(e){
 							console.error(e);
 							elem_status.innerHTML = "An error occured";
 							document.getElementById("excel-button").disabled = false;
 						}
-						worker.postMessage({d:data,
-							b:'binary', 
-							c:document.getElementById("opt-gen-comma").checked
-						});
-					};
-					var reader = new FileReader(), _this = this;
-					reader.onload = function(e){
-						elem_status.innerHTML = 'Converting... <a href="#" id="worksheet-cancel">Cancel</a>';
-						document.getElementById("worksheet-cancel").addEventListener("click", function(e){
-							e.preventDefault();
-							worker.terminate();
-							document.getElementById("excel-button").disabled = false;
-							elem_status.innerHTML = "";
-						},false);
-						excelWorker(e.target.result, _this._importExcel);
-					};
-					reader.onprogress = function(e){
-						if(e.lengthComputable){
-							var percent = Math.round(e.loaded/e.total*100);
-							elem_status.innerHTML = "Loading "+percent+"%";
-						}
+						reader.readAsBinaryString(file);
 					}
-					reader.onerror = function(e){
-						console.error(e);
-						elem_status.innerHTML = "An error occured";
-						document.getElementById("excel-button").disabled = false;
-					}
-					reader.readAsBinaryString(file);
 				}
 			}
 			this.openImportModal = function(format){

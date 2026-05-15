@@ -134,7 +134,7 @@
 								<div class="group-col">
 									<button data-target="#table-properties" title="Properties of the table" data-toggle="modal"><img src="icons/info-circle.svg">Properties</button>
 									<button onclick="table.openImportModal('latex')" title="Import a table from LaTeX"><img src="icons/braces.svg">Import from LaTeX</button>
-									<button onclick="$('#worksheet-dialog').modal('show')" title="Import a table from Excel or from OpenOffice Calc"><img src="icons/file-earmark-spreadsheet.svg">Load from Excel</button>
+									<button onclick="$('#worksheet-dialog').modal('show')" title="Import a table from a file, including Excel and OpenOffice Calc"><img src="icons/file-earmark-spreadsheet.svg">Upload file</button>
 								</div>
 							</div>
 							<span>Table</span>
@@ -883,12 +883,15 @@
 					<h4 class="modal-title" id="myModalLabel">Load From Worksheet <span class="label label-warning">BETA</span></h4>
 				</div>
 				<div class="modal-body">
-					<center><em>This utility allows you to load XLS, XLSX, XLSM, CSV, OSD, SLK files and more. <strong>You can't load LaTeX files yet with this utility. Use the other utility instead.</strong></em></center>
+					<center><em>This utility allows you to load XLS, XLSX, XLSM, CSV, OSD, SLK files and more.</em></center>
 					<div style="padding:4px;">
 						<div id="worksheet-drop">
 							<div>Drag a file</div>
 							<div>- or -</div>
-							<input type="file" id="excel-file" class="form-control-file" accept="<!--Accepted files-->
+							<!--Accepted files-->
+							<input type="file" id="excel-file" class="form-control-file" accept="
+.tex,
+.md,
 .csv,
 .xls,
 .xlsx,
@@ -896,7 +899,6 @@
 .xlsb,
 .ods,
 .fods,
-.csv,
 .txt,
 .sylk,
 .html,
